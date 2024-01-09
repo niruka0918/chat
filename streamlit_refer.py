@@ -21,10 +21,10 @@ from langchain.memory import StreamlitChatMessageHistory
 
 def main():
     st.set_page_config(
-    page_title="DirChat",
+    page_title="Document Chat",
     page_icon=":books:")
 
-    st.title("_문서채팅 프로그램  :red[QA Chat]_ :books:")
+    st.title("_문서기반 채팅 프로그램  :red[QA Chat]_ :books:")
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
@@ -38,6 +38,8 @@ def main():
     with st.sidebar:
         uploaded_files =  st.file_uploader("Upload your file",type=['pdf','docx','pptx'],accept_multiple_files=True)
         openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+        print("KEY VALUE :")
+        print(openai_api_key)
         process = st.button("Process")
     if process:
         if not openai_api_key:
