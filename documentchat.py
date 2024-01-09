@@ -16,7 +16,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
 
 # from streamlit_chat import message
-from langchain_community.callbacks import get_openai_callback
+from langchain-community.callbacks import get_openai_callback
 from langchain.memory import StreamlitChatMessageHistory
 
 def main():
@@ -37,8 +37,8 @@ def main():
 
     with st.sidebar:
         uploaded_files =  st.file_uploader("Upload your file",type=['pdf','docx','pptx'],accept_multiple_files=True)
-        openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-        print("KEY VALUE :")
+        """openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")"""
+        openai_api_key = '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'
         print(openai_api_key)
         process = st.button("Process")
     if process:
