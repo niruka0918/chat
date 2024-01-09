@@ -1,5 +1,7 @@
 import streamlit as st
 import tiktoken
+import os
+
 from loguru import logger
 
 from langchain.chains import ConversationalRetrievalChain
@@ -24,6 +26,10 @@ def main():
     page_title="Document Chat",
     page_icon=":books:")
 
+    os.environ["openai_api_key"] == st.secrets["openai_api_key"]
+    a = st.secrets["openai_api_key"]
+    print("환경변수")
+    print(a)
     st.title("_문서기반 채팅 프로그램  :red[QA Chat]_ :books:")
 
     if "conversation" not in st.session_state:
