@@ -28,7 +28,7 @@ def main():
 
     os.environ["openai_api_key"] == st.secrets["openai_api_key"]
 
-    st.title("_문서기반 채팅 프로그램  :red[QA Chat]_ :books:")
+    st.title("_KICJ 문서기반 채팅 프로그램  :red[QA Chat]_ :books:")
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
@@ -40,7 +40,7 @@ def main():
         st.session_state.processComplete = None
 
     with st.sidebar:
-        uploaded_files =  st.file_uploader("Upload your file",type=['pdf','docx','pptx'],accept_multiple_files=True)
+        uploaded_files = st.file_uploader("Upload your file",type=['pdf','docx','pptx'],accept_multiple_files=True)
         openai_api_key = st.secrets["openai_api_key"]
         process = st.button("Process")
     if process:
@@ -153,8 +153,6 @@ def get_conversation_chain(vetorestore,openai_api_key):
         )
 
     return conversation_chain
-
-
 
 if __name__ == '__main__':
     main()
