@@ -9,7 +9,7 @@ from langchain.chat_models import ChatOpenAI
 
 from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import Docx2txtLoader
-from langchain.document_loaders import UnstructuredPowerPointLoader
+#from langchain.document_loaders import UnstructuredPowerPointLoader
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -40,7 +40,7 @@ def main():
         st.session_state.processComplete = None
 
     with st.sidebar:
-        uploaded_files = st.file_uploader("Upload your file",type=['pdf','docx','pptx'],accept_multiple_files=True)
+        uploaded_files = st.file_uploader("Upload your file",type=['pdf','docx'],accept_multiple_files=True)
         openai_api_key = st.secrets["openai_api_key"]
         process = st.button("Process")
     if process:
@@ -57,7 +57,7 @@ def main():
 
     if 'messages' not in st.session_state:
         st.session_state['messages'] = [{"role": "assistant", 
-                                        "content": "질문하고자 하는 보고서를 업로드 하세요(허용 확장자 .pdf, .docx, .pptx)"}]
+                                        "content": "질문하고자 하는 보고서를 업로드 하세요(허용 확장자 .pdf, .docx)"}]
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
@@ -112,9 +112,6 @@ def get_text(docs):
             documents = loader.load_and_split()
         elif '.docx' in doc.name:
             loader = Docx2txtLoader(file_name)
-            documents = loader.load_and_split()
-        elif '.pptx' in doc.name:
-            loader = UnstructuredPowerPointLoader(file_name)
             documents = loader.load_and_split()
 
         doc_list.extend(documents)
