@@ -18,18 +18,16 @@ from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
 
 # from streamlit_chat import message
-from langchain_community.callbacks import get_openai_callback
+from langchain.callbacks import get_openai_callback
 from langchain.memory import StreamlitChatMessageHistory
 
 def main():
     st.set_page_config(
-    page_title="Document Chat",
+    page_title="KICJ Document Chat",
     page_icon=":books:")
 
-    os.environ["openai_api_key"] == st.secrets["openai_api_key"]
-
-    st.title("_KICJ 문서기반 채팅 프로그램  :red[QA Chat]_ :books:")
-
+    st.title("_KICJ Private Data :red[Q/A Document Chat]_ :books:")
+    os.environ["openai_api_key"] = st.secrets["openai_api_key"]
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
 
@@ -45,7 +43,7 @@ def main():
         process = st.button("Process")
     if process:
         if not openai_api_key:
-            st.info("Please add your OpenAI API key to continue.")
+            st.info("환경변수에 API키가 입력되지 않았습니다.")
             st.stop()
         files_text = get_text(uploaded_files)
         text_chunks = get_text_chunks(files_text)
@@ -57,7 +55,7 @@ def main():
 
     if 'messages' not in st.session_state:
         st.session_state['messages'] = [{"role": "assistant", 
-                                        "content": "질문하고자 하는 보고서를 업로드 하세요(허용 확장자 .pdf, .docx)"}]
+                                        "content": "업로드한 문서에 대한 질문을 입력하세요."}]
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
@@ -66,7 +64,7 @@ def main():
     history = StreamlitChatMessageHistory(key="chat_messages")
 
     # Chat logic
-    if query := st.chat_input("질문을 입력해주세요."):
+    if query := st.chat_input("질문을 입력하세요."):
         st.session_state.messages.append({"role": "user", "content": query})
 
         with st.chat_message("user"):
@@ -75,7 +73,7 @@ def main():
         with st.chat_message("assistant"):
             chain = st.session_state.conversation
 
-            with st.spinner("Thinking..."):
+            with st.spinner("생성중.."):
                 result = chain({"question": query})
                 with get_openai_callback() as cb:
                     st.session_state.chat_history = result['chat_history']
@@ -83,7 +81,7 @@ def main():
                 source_documents = result['source_documents']
 
                 st.markdown(response)
-                with st.expander("기반된 참고문서"):
+                with st.expander("참조된 문서"):
                     st.markdown(source_documents[0].metadata['source'], help = source_documents[0].page_content)
                     st.markdown(source_documents[1].metadata['source'], help = source_documents[1].page_content)
                     st.markdown(source_documents[2].metadata['source'], help = source_documents[2].page_content)
@@ -113,7 +111,6 @@ def get_text(docs):
         elif '.docx' in doc.name:
             loader = Docx2txtLoader(file_name)
             documents = loader.load_and_split()
-
         doc_list.extend(documents)
     return doc_list
 
@@ -150,6 +147,8 @@ def get_conversation_chain(vetorestore,openai_api_key):
         )
 
     return conversation_chain
+
+
 
 if __name__ == '__main__':
     main()
