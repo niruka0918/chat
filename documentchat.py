@@ -26,7 +26,7 @@ def main():
     page_title="KICJ Document Chat",
     page_icon=":books:")
 
-    st.title("_KICJ Private Data :red[Q/A Document Chat]_ :books:")
+    st.title("_KICJ :red[Q/A Document Chat]_ :books:")
     os.environ["openai_api_key"] = st.secrets["openai_api_key"]
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
