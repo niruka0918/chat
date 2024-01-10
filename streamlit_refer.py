@@ -1,5 +1,7 @@
 import streamlit as st
 import tiktoken
+import os
+
 from loguru import logger
 
 from langchain.chains import ConversationalRetrievalChain
@@ -7,7 +9,7 @@ from langchain.chat_models import ChatOpenAI
 
 from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import Docx2txtLoader
-from langchain.document_loaders import UnstructuredPowerPointLoader
+#from langchain.document_loaders import UnstructuredPowerPointLoader
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -20,11 +22,12 @@ from langchain.callbacks import get_openai_callback
 from langchain.memory import StreamlitChatMessageHistory
 
 def main():
+    os.environ["openai_api_key"] == st.secrets["openai_api_key"]
     st.set_page_config(
-    page_title="DirChat",
+    page_title="KICJ Document Chat",
     page_icon=":books:")
 
-    st.title("_Private Data :red[QA Chat]_ :books:")
+    st.title("_KICJ Private Data :red[Q/A Document Chat]_ :books:")
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
@@ -36,12 +39,12 @@ def main():
         st.session_state.processComplete = None
 
     with st.sidebar:
-        uploaded_files =  st.file_uploader("Upload your file",type=['pdf','docx'],accept_multiple_files=True)
-        openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+        uploaded_files = st.file_uploader("Upload your file",type=['pdf','docx'],accept_multiple_files=True)
+        openai_api_key = st.secrets["openai_api_key"]
         process = st.button("Process")
     if process:
         if not openai_api_key:
-            st.info("Please add your OpenAI API key to continue.")
+            st.info("환경변수에 API키가 입력되지 않았습니다.")
             st.stop()
         files_text = get_text(uploaded_files)
         text_chunks = get_text_chunks(files_text)
@@ -53,7 +56,7 @@ def main():
 
     if 'messages' not in st.session_state:
         st.session_state['messages'] = [{"role": "assistant", 
-                                        "content": "안녕하세요! 주어진 문서에 대해 궁금하신 것이 있으면 언제든 물어봐주세요!"}]
+                                        "content": "업로드한 문서에 대한 질문을 입력하세요."}]
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
@@ -62,7 +65,7 @@ def main():
     history = StreamlitChatMessageHistory(key="chat_messages")
 
     # Chat logic
-    if query := st.chat_input("질문을 입력해주세요."):
+    if query := st.chat_input("질문을 입력하세요."):
         st.session_state.messages.append({"role": "user", "content": query})
 
         with st.chat_message("user"):
@@ -79,7 +82,7 @@ def main():
                 source_documents = result['source_documents']
 
                 st.markdown(response)
-                with st.expander("참고 문서 확인"):
+                with st.expander("참조된 문서"):
                     st.markdown(source_documents[0].metadata['source'], help = source_documents[0].page_content)
                     st.markdown(source_documents[1].metadata['source'], help = source_documents[1].page_content)
                     st.markdown(source_documents[2].metadata['source'], help = source_documents[2].page_content)
@@ -109,10 +112,6 @@ def get_text(docs):
         elif '.docx' in doc.name:
             loader = Docx2txtLoader(file_name)
             documents = loader.load_and_split()
-        elif '.pptx' in doc.name:
-            loader = UnstructuredPowerPointLoader(file_name)
-            documents = loader.load_and_split()
-
         doc_list.extend(documents)
     return doc_list
 
