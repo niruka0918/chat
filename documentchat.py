@@ -27,7 +27,7 @@ def main():
     page_icon=":books:")
 
     st.title("_KICJ :red[Q/A Document Chat]_ :books:")
-    os.environ["openai_api_key"] = st.secrets["openai_api_key"]
+    openai_api_key = st.secrets["openai_api_key"]
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
 
@@ -39,7 +39,7 @@ def main():
 
     with st.sidebar:
         uploaded_files = st.file_uploader("Upload your file",type=['pdf','docx'],accept_multiple_files=True)
-        openai_api_key = st.secrets["openai_api_key"]
+        
         process = st.button("Process")
     if process:
         if not openai_api_key:
