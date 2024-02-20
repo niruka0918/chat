@@ -82,9 +82,9 @@ def main():
 
                 st.markdown(response)
                 with st.expander("참조된 문서"):
-                    st.markdown(source_documents[0].metadata['source'], help = source_documents[0].page_content)
-                    st.markdown(source_documents[1].metadata['source'], help = source_documents[1].page_content)
-                    st.markdown(source_documents[2].metadata['source'], help = source_documents[2].page_content)
+                    st.markdown(source_documents[0].metadata['source'],source_documents[0].metadata['page'], help = source_documents[0].page_content)
+                    st.markdown(source_documents[1].metadata['source'],source_documents[1].metadata['page'], help = source_documents[1].page_content)
+                    st.markdown(source_documents[2].metadata['source'],source_documents[2].metadata['page'], help = source_documents[2].page_content)
                     
 
 
