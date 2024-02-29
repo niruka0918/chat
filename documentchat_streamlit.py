@@ -17,7 +17,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
 
-# from streamlit_chat import message
+from streamlit_chat import message
 from langchain.callbacks import get_openai_callback
 from langchain.memory import StreamlitChatMessageHistory
 
@@ -49,12 +49,12 @@ def main():
         text_chunks = get_text_chunks(files_text)
         vetorestore = get_vectorstore(text_chunks)
      
-        st.session_state.conversation = get_conversation_chain(vetorestore,openai_api_key) 
+        st.session_state.conversation = get_conversation_chain(vetorestore,openai_api_key)
 
         st.session_state.processComplete = True
 
     if 'messages' not in st.session_state:
-        st.session_state['messages'] = [{"role": "assistant", 
+        st.session_state['messages'] = [{"role": "assistant",
                                         "content": "업로드한 문서에 대한 질문을 입력하세요."}]
 
     for message in st.session_state.messages:
@@ -63,7 +63,7 @@ def main():
 
     history = StreamlitChatMessageHistory(key="chat_messages")
 
-   # Chat logic
+    # Chat logic
     if query := st.chat_input("질문을 입력하세요."):
         st.session_state.messages.append({"role": "user", "content": query})
 
@@ -94,7 +94,7 @@ def main():
 
                         # 마크다운으로 표시, HTML 태그 사용을 허용
                         st.markdown(markdown_content, unsafe_allow_html=True)
-                        
+
 
 # Add assistant message to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
@@ -107,7 +107,7 @@ def tiktoken_len(text):
 def get_text(docs):
 
     doc_list = []
-    
+
     for doc in docs:
         file_name = doc.name  # doc 객체의 이름을 파일 이름으로 사용
         with open(file_name, "wb") as file:  # 파일을 doc.name으로 저장
@@ -138,16 +138,16 @@ def get_vectorstore(text_chunks):
                                         model_name="jhgan/ko-sroberta-multitask",
                                         model_kwargs={'device': 'cpu'},
                                         encode_kwargs={'normalize_embeddings': True}
-                                        )  
+                                        )
     vectordb = FAISS.from_documents(text_chunks, embeddings)
     return vectordb
 
 def get_conversation_chain(vetorestore,openai_api_key):
     llm = ChatOpenAI(openai_api_key=openai_api_key, model_name = 'gpt-3.5-turbo',temperature=0)
     conversation_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm, 
-            chain_type="stuff", 
-            retriever=vetorestore.as_retriever(search_type = 'mmr', vervose = True), 
+            llm=llm,
+            chain_type="stuff",
+            retriever=vetorestore.as_retriever(search_type = 'mmr', vervose = True),
             memory=ConversationBufferMemory(memory_key='chat_history', return_messages=True, output_key='answer'),
             get_chat_history=lambda h: h,
             return_source_documents=True,
