@@ -16,8 +16,6 @@ from langchain.embeddings import HuggingFaceEmbeddings
 
 from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
-
-from streamlit_chat import message
 from langchain.callbacks import get_openai_callback
 from langchain.memory import StreamlitChatMessageHistory
 
