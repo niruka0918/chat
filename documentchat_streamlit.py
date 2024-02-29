@@ -63,7 +63,7 @@ def main():
 
     history = StreamlitChatMessageHistory(key="chat_messages")
 
-    # Chat logic
+   # Chat logic
     if query := st.chat_input("질문을 입력하세요."):
         st.session_state.messages.append({"role": "user", "content": query})
 
@@ -82,11 +82,19 @@ def main():
 
                 st.markdown(response)
                 with st.expander("참조된 문서"):
-                    st.markdown(source_documents[0].metadata['source'], source_documents[0].metadata['page'],help = source_documents[0].page_content)
-                    st.markdown(source_documents[1].metadata['source'], source_documents[1].metadata['page'],help = source_documents[1].page_content)
-                    st.markdown(source_documents[2].metadata['source'], source_documents[2].metadata['page'],help = source_documents[2].page_content)
-                    
+                    # source_documents의 첫 번째부터 세 번째 문서에 대한 정보를 출력
+                    for i in range(3):
+                        # 페이지 번호에 +1을 하여 출력
+                        page_number = int(source_documents[i].metadata['page']) + 1
+                        source = source_documents[i].metadata['source']
+                        content = source_documents[i].page_content
 
+                        # 마크다운 형식의 문자열로 결합하고, <br> 태그를 사용하여 개행 추가
+                        markdown_content = f"**문서제목:** {source} <br>**페이지번호:** {page_number}p <br>**추출문단:** {content}"
+
+                        # 마크다운으로 표시, HTML 태그 사용을 허용
+                        st.markdown(markdown_content, unsafe_allow_html=True)
+                        
 
 # Add assistant message to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
